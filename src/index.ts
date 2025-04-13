@@ -2,6 +2,7 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { streamText } from "ai";
 import * as readline from "readline";
 import { getBraveSearchTool } from "./brave-tool";
+import { getFetchTool } from "./fetch-tool";
 import { getTools } from "./get-tools";
 
 // Create readline interface
@@ -25,7 +26,11 @@ type Message = {
 async function startChat() {
 	try {
 		console.log("Loading tools...");
-		const toolsData = await getTools([await getBraveSearchTool()]);
+		const toolsData = await getTools([
+			await getBraveSearchTool(),
+			await getFetchTool(),
+		]);
+
 		cleanup = toolsData.cleanup;
 		if (cleanup === undefined) {
 			console.error("Cleanup function not found");
@@ -65,7 +70,6 @@ async function startChat() {
 							"Your response will be printed in a command line environment. Please do not use markdown.",
 						tools: toolsData.tools,
 						maxSteps: 20,
-						// prompt: userInput,
 						messages: chatHistory, // Include all previous messages but not the current one
 					});
 
